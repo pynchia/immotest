@@ -1,3 +1,5 @@
-from .item import Item
+from .artist import Artist
 
-__all__ = ["Item"]
+__all__ = [
+    "Artist",
+]

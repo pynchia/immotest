@@ -1,10 +1,7 @@
 import logging
 
-from app.core.config import Config
-
-__version__ = "0.1.0"
+from app.core.config import settings
 
 logging.basicConfig(format="%(asctime)s %(levelname)s:%(name)s: %(message)s")
 logger = logging.getLogger(__name__)
-logger.setLevel(Config.LOGGING_LEVEL)
-logger.info("Version %s", __version__)
+logger.setLevel(settings.LOGGING_LEVEL)

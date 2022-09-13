@@ -1,9 +1,10 @@
-import os
+from pydantic import BaseSettings
 
 
-class Config:
-    DATABASE_URL = (
-        f"postgresql+asyncpg://{os.environ['POSTGRES_USER']}:"
-        f"{os.environ['POSTGRES_PASSWORD']}@db/{os.environ['POSTGRES_DB']}"
-    )
-    LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "INFO")
+class Settings(BaseSettings):
+    API_VERSION: str = "0.1.0"
+    LOGGING_LEVEL: str = "INFO"
+    SQLALCHEMY_DATABASE_URI: str = None
+
+
+settings = Settings()

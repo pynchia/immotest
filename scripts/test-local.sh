@@ -9,3 +9,4 @@ docker-compose build --build-arg INSTALL_DEV=true
 docker-compose up -d
 sleep 1
 docker-compose exec -T api bash /app/scripts/tests-start.sh "$@"
+docker-compose down

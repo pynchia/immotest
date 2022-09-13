@@ -10,8 +10,6 @@ logger = logging.getLogger(__name__)
 MAX_TRIES = 60 * 5  # 5 minutes
 WAIT_SECONDS = 1
 
-loop = asyncio.get_event_loop()
-
 
 @retry(
     stop=stop_after_attempt(MAX_TRIES),
@@ -31,4 +29,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    loop.run_until_complete(main())
+    asyncio.run(main())

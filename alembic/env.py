@@ -3,10 +3,10 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from app.core.config import Config
+from app.core.config import settings
 from app.db import Base
 
-DATABASE_URL = Config.DATABASE_URL.replace("+asyncpg", "")
+DATABASE_URL = settings.SQLALCHEMY_DATABASE_URI.replace("+asyncpg", "")
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

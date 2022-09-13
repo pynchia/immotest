@@ -1,20 +1,20 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9 as base
 ENV PORT="8080"
+ENV PYTHONUNBUFFERED=true
+WORKDIR /app
 
-# Install Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
-
-# Copy dependencies
-COPY ./pyproject.toml ./poetry.lock* /app/
-
-# Allow installing dev dependencies to run tests
-ARG INSTALL_DEV=false
-RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --no-dev ; fi"
+# FROM base as poetry
+ENV POETRY_HOME=/opt/poetry
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV PATH="$POETRY_HOME/bin:$PATH"
+RUN python -c 'from urllib.request import urlopen; print(urlopen("https://install.python-poetry.org").read().decode())' | python -
 
 COPY . /app
 
+RUN poetry install --no-interaction --no-ansi -vvv --without dev
+
+# FROM base as runtime
+ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH=/app
 EXPOSE 8080

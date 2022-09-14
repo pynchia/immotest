@@ -2,7 +2,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
-from .item import Item, ItemCreate, ItemUpdate
+from .artist import Artist, ArtistCreate, ArtistUpdate
 from .typing import CreateType, ModelType, UpdateType
 
 
@@ -17,9 +17,9 @@ class ErrorModel(BaseModel):
 
 __all__ = [
     "Message",
-    "Item",
-    "ItemCreate",
-    "ItemUpdate",
+    "Artist",
+    "ArtistCreate",
+    "ArtistUpdate",
     "CreateType",
     "ModelType",
     "UpdateType",

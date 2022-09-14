@@ -32,7 +32,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"{self._table.__name__} successfully created")
         return db_obj
 
-    async def get(self, db: AsyncSession, obj_id: int) -> schemas.ModelType:
+    async def get(self, db: AsyncSession, obj_id: str) -> schemas.ModelType:
         result = await db.get(self._table, obj_id)
 
         if not result:
@@ -62,13 +62,8 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"List all {self._table.__name__} successful")
         return results.scalars().all()
 
-    async def count(self, db: AsyncSession) -> int:
-        results = await db.execute(select(func.count(self._table.id)))
-        (result,) = results.one()
-        return result
-
     async def update(
-        self, db: AsyncSession, obj_in: schemas.UpdateType, obj_id: int
+        self, db: AsyncSession, obj_in: schemas.UpdateType, obj_id: str
     ) -> schemas.ModelType:
 
         db_obj: schemas.ModelType = await self.get(db, obj_id)
@@ -85,7 +80,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"{self._table.__name__} id={obj_id} successfully updated")
         return db_obj
 
-    async def delete(self, db: AsyncSession, obj_id: int) -> None:
+    async def delete(self, db: AsyncSession, obj_id: str) -> None:
         db_obj = await self.get(db, obj_id)
         await db.delete(db_obj)
         await db.commit()

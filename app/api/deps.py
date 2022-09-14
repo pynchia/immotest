@@ -15,7 +15,7 @@ async def get_db() -> AsyncSession:
     async with async_session() as session:
         try:
             yield session
-            await session.commit()
+            # await session.commit()
         except SQLAlchemyError:
             logger.error("Transaction failed, rolling back")
             await session.rollback()

@@ -6,11 +6,11 @@ import httpx
 from fastapi.encoders import jsonable_encoder
 
 from app import schemas
-from app.core.config import settings
-from app.fetch.service import ErrorFetchFailed, FetchConnectorService
+from app.fetch.service import ErrorFetchFailed, MusicService
+from app.logger import log_call, logger
 
 
-class Spotify(FetchConnectorService):
+class Spotify(MusicService):
     """
     The connector to Spotify
     """
@@ -22,28 +22,43 @@ class Spotify(FetchConnectorService):
         connector = cls()
         connector.client_id = client_id
         connector.client_secret = client_secret
-        connector.auth_token = await connector.get_token()
+        connector.auth_token = await connector._get_token()
+        return connector
 
-    async def get_token(self) -> Tuple[str, int]:
+    async def _get_token(self) -> Tuple[str, int]:
         message = f"{self.client_id}:{self.client_secret}"
         base64Message = base64.b64encode(message.encode("ascii")).decode("ascii")
 
         headers = {"Authorization": f"Basic {base64Message}"}
         data = {"grant_type": "client_credentials"}
-        resp = httpx.post(self.TOKEN_URI, headers=headers, data=data)
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(self.TOKEN_URI, headers=headers, data=data)
         resp_as_dict = resp.json()
         auth_token = resp_as_dict["access_token"]
         return auth_token
 
-    async def fetch(self, artist_id: str) -> schemas.ArtistUpdate:
-        async with httpx.AsyncClient() as client:
-            resp = await client.post()
-        if resp.status_code >= 300:  # it's an error
-            fail_message = (
-                f"HTTP {resp.status_code}: Failed to fetch artist {artist_id}"
-            )
-            # logger.error("%s", failed_message)
-            raise ErrorFetchFailed(fail_message)
+    @log_call
+    async def fetch(self, artist_id: str) -> Tuple[str, schemas.ArtistUpdate]:
+        """
+        Fetch one artist from Spotify
+        Return:
+            artist_id, schemas.ArtistUpdate
+        """
+        # async with httpx.AsyncClient() as client:
+        #     # TODO make it real
+        #     resp = await client.post()
+        # if resp.status_code >= 300:  # it's an error
+        #     fail_message = (
+        #         f"HTTP {resp.status_code}: Failed to fetch artist {artist_id}"
+        #     )
+        #     # logger.error("%s", failed_message)
+        #     raise ErrorFetchFailed(fail_message)
+
+        # TODO dummy fixed ret value to try things out
+        return (
+            "5PFSmueeFLrjYXqn3agenn",
+            schemas.ArtistUpdate(name="Ian Duryx", popularity=2),
+        )
 
 
 spotify = Spotify()

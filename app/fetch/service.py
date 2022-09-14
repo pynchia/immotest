@@ -8,14 +8,17 @@ class ErrorFetchFailed(Exception):
     pass
 
 
-class FetchConnectorService(ABC):
+class MusicService(ABC):
     """
-    Defines the functionality offered by the connectors
+    Defines the interface of the connectors
     """
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     async def create(cls, *args, **kwargs):
+        """
+        Instantiate the service connector and returns its own class
+        """
         pass
 
     @abstractmethod
@@ -24,7 +27,7 @@ class FetchConnectorService(ABC):
         Fetch one artist from the music archive provider
         Params:
             artist_id: the artist id
-        Raise
+        Raise:
             ErrorFetchFailed when it fails
         """
         pass

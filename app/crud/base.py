@@ -1,4 +1,3 @@
-import logging
 from typing import Generic, List, Optional, Type
 
 from fastapi.encoders import jsonable_encoder
@@ -9,8 +8,7 @@ from sqlalchemy.sql.elements import ClauseElement
 
 from app import schemas
 from app.exceptions import ModelNotFoundException
-
-logger = logging.getLogger(__name__)
+from app.logger import log_call, logger
 
 
 class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType]):
@@ -21,6 +19,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
     def table(self) -> Type[schemas.ModelType]:
         return self._table
 
+    @log_call
     async def create(
         self, db: AsyncSession, obj_in: schemas.CreateType
     ) -> schemas.ModelType:
@@ -32,6 +31,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"{self._table.__name__} successfully created")
         return db_obj
 
+    @log_call
     async def get(self, db: AsyncSession, obj_id: str) -> schemas.ModelType:
         result = await db.get(self._table, obj_id)
 
@@ -43,6 +43,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"{self._table.__name__} id={obj_id} found")
         return result
 
+    @log_call
     async def list(
         self,
         db: AsyncSession,
@@ -62,6 +63,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"List all {self._table.__name__} successful")
         return results.scalars().all()
 
+    @log_call
     async def update(
         self, db: AsyncSession, obj_in: schemas.UpdateType, obj_id: str
     ) -> schemas.ModelType:
@@ -80,6 +82,7 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
         logger.debug(f"{self._table.__name__} id={obj_id} successfully updated")
         return db_obj
 
+    @log_call
     async def delete(self, db: AsyncSession, obj_id: str) -> None:
         db_obj = await self.get(db, obj_id)
         await db.delete(db_obj)

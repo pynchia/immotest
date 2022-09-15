@@ -27,6 +27,9 @@ class MusicService(ABC):
         Fetch one artist from the music archive provider
         Params:
             artist_id: the artist id
+        Return:
+            the id of the artist
+            the artist as an update schema
         Raise:
             ErrorFetchFailed when it fails
         """

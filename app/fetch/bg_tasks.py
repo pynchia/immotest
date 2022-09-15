@@ -34,17 +34,29 @@ class ArtistFetcher:
                     (models.Artist.updated_by_be == False),
                 ],
             )
-            fetch_requests = (self.music_connector.fetch(a.id) for a in artists)
-            id_and_artists = await asyncio.gather(
-                *fetch_requests, return_exceptions=True
-            )
-            update_ops = (
-                crud.artist.update(db, obj_in=a, obj_id=id_)
-                for id_, a in id_and_artists
-            )
-            await asyncio.gather(
-                *update_ops, return_exceptions=False
-            )  # update artists in db
+            # fetch_requests = (self.music_connector.fetch(a.id) for a in artists)
+            # id_and_artists = await asyncio.gather(
+            #     *fetch_requests, return_exceptions=True
+            # )
+            # Note: we need to issue requests more slowly to Spotify
+            # otherwise it complains with a 429
+            id_and_artists = []
+            for a in artists:  # this loop can be made async
+                id_and_artists.append(await self.music_connector.fetch(a.id))
+                await asyncio.sleep(1.0)
+
+            # update_ops = (
+            #     crud.artist.update(db, obj_in=a, obj_id=id_)
+            #     for id_, a in id_and_artists
+            # )
+            # await asyncio.gather(
+            #     *update_ops, return_exceptions=False
+            # )  # update artists in db
+            # Note: unfortunately the gather does not work, no concurrent db.add
+            # before a flush
+
+            for id_, a in id_and_artists:  # this loop can be made async
+                await crud.artist.update(db, obj_in=a, obj_id=id_)
 
     @log_call
     async def run(self):

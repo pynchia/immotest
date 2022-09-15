@@ -49,14 +49,14 @@ async def read_artist(*, db: AsyncSession = Depends(get_db), id: str) -> Artist:
     responses={409: {"model": Message}},
 )
 async def create_artist(
-    *, db: AsyncSession = Depends(get_db), item_in: ArtistCreate
+    *, db: AsyncSession = Depends(get_db), artist_in: ArtistCreate
 ) -> Artist:
     """
     Create an artist
     """
 
     try:
-        created_artist = await artist.create(db, item_in)
+        created_artist = await artist.create(db, artist_in)
         return parse_obj_as(Artist, created_artist)
     except IntegrityError as error:
         raise HTTPException(
@@ -70,14 +70,14 @@ async def create_artist(
     responses={404: {"model": Message}, 400: {"model": Message}},
 )
 async def update_artist(
-    *, db: AsyncSession = Depends(get_db), id: str, item_in: ArtistUpdate
+    *, db: AsyncSession = Depends(get_db), id: str, artist_in: ArtistUpdate
 ) -> Artist:
     """
     Update an artist
     """
 
     try:
-        updated_artist = await artist.update(db, item_in, id, updated_by_be=True)
+        updated_artist = await artist.update(db, artist_in, id, updated_by_be=True)
         return parse_obj_as(Artist, updated_artist)
     except ModelNotFoundException as error:
         raise HTTPException(

@@ -3,7 +3,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     API_VERSION: str = "0.1.0"
-    BACKEND_CORS_ORIGINS: str = [
+    BACKEND_CORS_ORIGINS: list = [
         "http://localhost",
         "http://localhost:3000",
         "http://localhost:8080",

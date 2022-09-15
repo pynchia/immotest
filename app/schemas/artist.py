@@ -11,13 +11,13 @@ class ArtistBase(BaseModel):
 
 
 class ArtistCreate(ArtistBase):
-    """Properties to receive on item creation"""
+    """Properties to receive on artist creation"""
 
     id: str
 
 
 class ArtistUpdate(ArtistBase):
-    """Properties to receive on item update"""
+    """Properties to receive on artist update"""
 
 
 class ArtistInDBBase(ArtistBase):

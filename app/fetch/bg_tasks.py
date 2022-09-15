@@ -2,7 +2,7 @@ import asyncio
 
 from sqlalchemy.exc import SQLAlchemyError
 
-from app import crud
+from app import crud, models
 from app.core.config import settings
 from app.db import async_session
 from app.fetch.service import ErrorFetchFailed, MusicService
@@ -28,11 +28,23 @@ class ArtistFetcher:
         Fetch the artists once
         """
         async with async_session() as db:
-            # TODO read suitable artists from the DB
-            artists = await crud.artist.list(db)
+            artists = await crud.artist.list(
+                db,
+                clauses=[
+                    (models.Artist.updated_by_be == False),
+                ],
+            )
             fetch_requests = (self.music_connector.fetch(a.id) for a in artists)
-            artists = await asyncio.gather(*fetch_requests, return_exceptions=True)
-            logger.debug(str(artists))
+            id_and_artists = await asyncio.gather(
+                *fetch_requests, return_exceptions=True
+            )
+            update_ops = (
+                crud.artist.update(db, obj_in=a, obj_id=id_)
+                for id_, a in id_and_artists
+            )
+            await asyncio.gather(
+                *update_ops, return_exceptions=False
+            )  # update artists in db
 
     @log_call
     async def run(self):

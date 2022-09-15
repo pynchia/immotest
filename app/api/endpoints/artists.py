@@ -77,7 +77,7 @@ async def update_artist(
     """
 
     try:
-        updated_artist = await artist.update(db, item_in, id)
+        updated_artist = await artist.update(db, item_in, id, updated_by_be=True)
         return parse_obj_as(Artist, updated_artist)
     except ModelNotFoundException as error:
         raise HTTPException(

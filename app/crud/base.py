@@ -65,12 +65,13 @@ class CRUDBase(Generic[schemas.ModelType, schemas.CreateType, schemas.UpdateType
 
     @log_call
     async def update(
-        self, db: AsyncSession, obj_in: schemas.UpdateType, obj_id: str
+        self, db: AsyncSession, obj_in: schemas.UpdateType, obj_id: str, **kwargs
     ) -> schemas.ModelType:
 
         db_obj: schemas.ModelType = await self.get(db, obj_id)
 
         update_data = obj_in.dict(exclude_unset=True)
+        update_data.update(**kwargs)
         for field in jsonable_encoder(db_obj):
             if field in update_data:
                 setattr(db_obj, field, update_data[field])

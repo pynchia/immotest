@@ -56,8 +56,8 @@ class Spotify(MusicService):
 
         # TODO dummy fixed ret value to try things out
         return (
-            "5PFSmueeFLrjYXqn3agenn",
-            schemas.ArtistUpdate(name="Ian Duryx", popularity=2),
+            "4awnjjqiUnSBA4ucPVbF8R",
+            schemas.ArtistUpdate(name="Sto Cavolo", popularity=9),
         )
 
 

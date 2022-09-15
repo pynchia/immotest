@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Iterable
+from typing import Tuple
 
 from app import schemas
 
@@ -22,7 +22,7 @@ class MusicService(ABC):
         pass
 
     @abstractmethod
-    async def fetch(self, artist_id: str) -> schemas.ArtistUpdate:
+    async def fetch(self, artist_id: str) -> Tuple[str, schemas.ArtistUpdate]:
         """
         Fetch one artist from the music archive provider
         Params:

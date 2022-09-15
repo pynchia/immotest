@@ -73,6 +73,8 @@ If needed, the functionality to refresh it could be addded.
 
 ### Tests
 
+**Nota Bene**: this code is far from being complete, but it does what was asked. Specifically, the tests can be increased of course, especially to test the background Spotify fetcher (both the connector and the fetcher service itself) by mocking Spotify  with the `respx` library.
+
 Start the stack & run tests with this command:
 
 ```Bash
